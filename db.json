@@ -1,0 +1,22 @@
+{
+    "Todos": [
+      {
+        "id": 1,
+        "todo": "Check Todo"
+      },
+      {
+        "id": 2,
+        "todo": "New Todo"
+      }
+    ],
+    "Users": [
+      {
+        "id": 1,
+        "name": "Franky"
+      },
+      {
+        "id": 2,
+        "name": "Bobo"
+      }
+    ]
+  }
