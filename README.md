@@ -21,3 +21,7 @@ We gotta cancel XHR requests if users click around like monkeys :)
 For example - re-requesting the same data; double posting; or blowing it away by navigating to a different route.
 
 It's also nice to show a progress bar, some things take long, depending on how good your backend developers are :)
+
+# techstack
+
+vuejs2.0 + router, typescript, axios, json-server, vue-progressbar

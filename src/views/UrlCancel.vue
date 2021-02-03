@@ -16,6 +16,7 @@ import { Component, Vue } from "vue-property-decorator";
 import axios from "axios";
 import Todo from "@/components/Todo";
 import User from "@/components/User";
+import RequestHandler from "@/components/RequestHandler";
 
 @Component({
   components: {}
@@ -23,13 +24,20 @@ import User from "@/components/User";
 export default class ManualCancel extends Vue {
   todos: Todo[] = [];
   users: User[] = [];
+  public $RequestHandler!: RequestHandler;
 
   doRequestUsers() {
-    // @ts-ignore
-    this.$RequestHandler.AxiosService.get("http://localhost:3000/users")
-      // @ts-ignore
+    this.$RequestHandler.Axios.get("http://localhost:3000/users")
       .then(response => {
         this.users = response.data;
+      })
+      .catch(this.standardRequestCatch);
+  }
+
+  doRequest() {
+    this.$RequestHandler.Axios.get("http://localhost:3000/todos")
+      .then(response => {
+        this.todos = response.data;
       })
       .catch(this.standardRequestCatch);
   }
@@ -40,16 +48,6 @@ export default class ManualCancel extends Vue {
     } else {
       console.log("Actual error!");
     }
-  }
-
-  doRequest() {
-    // @ts-ignore
-    this.$RequestHandler.AxiosService.get("http://localhost:3000/todos")
-      // @ts-ignore
-      .then(response => {
-        this.todos = response.data;
-      })
-      .catch(this.standardRequestCatch);
   }
 }
 </script>

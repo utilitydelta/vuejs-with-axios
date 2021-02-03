@@ -1,29 +1,16 @@
 //Parts of this taken from https://laptrinhx.com/how-does-axios-cancel-duplicate-requests-253816797/
 
 import axios, { AxiosInstance } from "axios";
+import IRequestHandler from "@/components/IRequestHandler";
 
-export default class RequestHandler {
-  pendingRequests = new Map();
-  requestCount = 0;
+export default class RequestHandler implements IRequestHandler {
+  private pendingRequests = new Map();
+  private requestCount = 0;
 
-  addRequest() {
-    if (this.requestCount == 0) {
-      this.progress.start();
-    }
-    this.requestCount++;
-  }
+  public Axios: AxiosInstance;
 
-  removeRequest() {
-    this.requestCount--;
-    if (this.requestCount == 0) {
-      this.progress.finish();
-    }
-  }
-  constructor(
-    router: any,
-    public AxiosService: AxiosInstance,
-    private progress: any
-  ) {
+  constructor(router: any, axiosService: AxiosInstance, private progress: any) {
+    //if the user changes route, cancel everything
     router.beforeEach((_to: any, _from: any, next: () => void) => {
       this.clearPending();
 
@@ -33,30 +20,50 @@ export default class RequestHandler {
       next();
     });
 
-    AxiosService.interceptors.request.use(
+    //instance or singleton of axios
+    this.Axios = axiosService ?? axios;
+
+    //XHR request handler
+    this.Axios.interceptors.request.use(
       (config) => {
-        this.addRequest();
+        this.addToRequestCount();
         this.removePending(config); // check and cancel the previous request before the request starts
         this.addPending(config); // add the current request to pending
         return config;
       },
       (error) => {
-        this.removeRequest();
+        this.subtractFromRequestCount();
         return Promise.reject(error);
       }
     );
 
-    AxiosService.interceptors.response.use(
+    //XHR response handler
+    this.Axios.interceptors.response.use(
       (response) => {
-        this.removeRequest();
+        this.subtractFromRequestCount();
         this.removePending(response.config); // after the request, remove the request
         return response;
       },
       (error) => {
-        this.removeRequest();
+        //todo: remove from pending?
+        this.subtractFromRequestCount();
         return Promise.reject(error);
       }
     );
+  }
+
+  private addToRequestCount() {
+    if (this.requestCount == 0) {
+      this.progress.start();
+    }
+    this.requestCount++;
+  }
+
+  private subtractFromRequestCount() {
+    this.requestCount--;
+    if (this.requestCount == 0) {
+      this.progress.finish();
+    }
   }
 
   private requestSignature(config: any): string {
