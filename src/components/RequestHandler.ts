@@ -9,7 +9,11 @@ export default class RequestHandler implements IRequestHandler {
 
   public Axios: AxiosInstance;
 
-  constructor(router: any, axiosService: AxiosInstance, private progress: any) {
+  constructor(
+    router: any,
+    axiosService: AxiosInstance | undefined,
+    private progress: any
+  ) {
     //if the user changes route, cancel everything
     router.beforeEach((_to: any, _from: any, next: () => void) => {
       this.clearPending();

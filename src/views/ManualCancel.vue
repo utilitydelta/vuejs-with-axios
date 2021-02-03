@@ -21,7 +21,7 @@ export default class ManualCancel extends Vue {
   cancelToken?: CancelTokenSource;
 
   doRequest() {
-    this.cancelToken = axios.CancelToken.source();
+    this.cancelToken = this.cancelToken ?? axios.CancelToken.source();
 
     // @ts-ignore
     this.$Progress.start();

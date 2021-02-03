@@ -22,9 +22,7 @@ const vue = new Vue({
   render: (h) => h(App),
 }).$mount("#app");
 
-const axiosInstance = axios.create({
-  baseURL: "http://localhost:3000",
-});
+const axiosInstance = axios.create();
 
 Vue.prototype.$RequestHandler = new RequestHandler(
   router,
